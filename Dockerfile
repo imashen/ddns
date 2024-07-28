@@ -25,7 +25,7 @@ WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/dist/ddns /usr/src/app/ddns
 
 
-EXPOSE 80
+EXPOSE 8044
 
 
 ENV PROVIDER=dnspod
@@ -36,5 +36,6 @@ ENV SUB_DOMAIN=ddns
 
 HEALTHCHECK --interval=1m --timeout=10s --start-period=10s CMD curl --fail http://localhost:8044 || exit 1
 
+VOLUME ["/usr/src/app"]
 
 CMD ["/usr/src/app/ddns"]
