@@ -124,8 +124,10 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(f"IPv4: {ipv4}\nIPv6: {ipv6}\n".encode('utf-8'))
         else:
-            self.send_response(404)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
             self.end_headers()
+            self.wfile.write("Server is running".encode('utf-8'))
 
 def start_server():
     server_address = ('0.0.0.0', 8044)  # Listen on all interfaces
