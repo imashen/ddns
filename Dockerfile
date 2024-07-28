@@ -34,7 +34,7 @@ ENV DOMAIN=demo.cn
 ENV SUB_DOMAIN=ddns
 
 
-HEALTHCHECK --interval=1m --timeout=10s --start-period=30s CMD curl --fail http://localhost:80 || exit 1
+HEALTHCHECK --interval=1m --timeout=10s --start-period=3s CMD curl --fail http://localhost:80 || exit 1
 
 
 CMD ["./ddns"]
