@@ -7,34 +7,22 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 
 # Get environment variables
-provider = os.getenv('PROVIDER', 'dnspod').lower()
 api_id = os.getenv('API_ID')
 api_token = os.getenv('API_TOKEN')
 domain = os.getenv('DOMAIN')
 sub_domain = os.getenv('SUB_DOMAIN')
 update_interval = int(os.getenv('UPDATE_INTERVAL', 600))  # default to 600 seconds if not set
 
-# DNS API endpoints and parameters
-if provider == 'dnspod':
-    base_url = "https://dnsapi.cn"
-    headers = {}
-    common_payload = {
-        "login_token": f"{api_id},{api_token}",
-        "format": "json",
-        "domain": domain,
-        "sub_domain": sub_domain,
-        "record_line": "默认"
-    }
-elif provider == 'alidns':
-    base_url = "https://alidns.aliyuncs.com/"
-    headers = {"Authorization": f"Bearer {api_token}"}
-    common_payload = {
-        "Action": "UpdateDomainRecord",
-        "DomainName": domain,
-        "RR": sub_domain
-    }
-else:
-    raise ValueError("Unsupported provider. Use 'dnspod' or 'alidns'.")
+
+base_url = "https://dnsapi.cn"
+headers = {}
+common_payload = {
+    "login_token": f"{api_id},{api_token}",
+    "format": "json",
+    "domain": domain,
+    "sub_domain": sub_domain,
+    "record_line": "默认"
+}
 
 # Function to get public IP addresses
 def get_public_ips():
@@ -53,20 +41,18 @@ def get_public_ips():
 
 # Function to get DNS record ID
 def get_record_id(record_type):
-    if provider == 'dnspod':
-        payload = common_payload.copy()
-        payload.update({"record_type": record_type})
-        try:
-            response = requests.post(f"{base_url}/Record.List", headers=headers, data=payload)
-            response.raise_for_status()
-            result = response.json()
-            if result.get("status", {}).get("code") == "1":
-                for record in result.get("records", []):
-                    if record.get("type") == record_type:
-                        return record.get("id")
-        except requests.RequestException as e:
-            print(f"Failed to get {record_type} record ID: {e}")
-    # Add Alidns provider handling if needed
+    payload = common_payload.copy()
+    payload.update({"record_type": record_type})
+    try:
+        response = requests.post(f"{base_url}/Record.List", headers=headers, data=payload)
+        response.raise_for_status()
+        result = response.json()
+        if result.get("status", {}).get("code") == "1":
+            for record in result.get("records", []):
+                if record.get("type") == record_type:
+                    return record.get("id")
+    except requests.RequestException as e:
+        print(f"Failed to get {record_type} record ID: {e}")
     return None
 
 # Function to create DNS record
@@ -97,10 +83,7 @@ def update_dns_record(record_type, ip_address):
         return
 
     payload = common_payload.copy()
-    if provider == 'dnspod':
-        payload.update({"record_id": record_id, "record_type": record_type, "value": ip_address})
-
-    # Add Alidns provider handling soon~~~~
+    payload.update({"record_id": record_id, "record_type": record_type, "value": ip_address})
 
     try:
         response = requests.post(f"{base_url}/Record.Modify", headers=headers, data=payload)
@@ -110,7 +93,7 @@ def update_dns_record(record_type, ip_address):
         print(f"Failed to update {record_type} record: {e}")
         return
 
-    if provider == 'dnspod' and result.get("status", {}).get("code") == "1":
+    if result.get("status", {}).get("code") == "1":
         print(f"{record_type} record updated successfully: {ip_address}")
     else:
         print(f"Failed to update {record_type} record: {result.get('status', {}).get('message')}")
