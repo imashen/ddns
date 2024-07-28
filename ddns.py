@@ -145,7 +145,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
 def start_server():
-    server_address = ('0.0.0.0', 80)  # Listen on all interfaces
+    server_address = ('0.0.0.0', 8044)  # Listen on all interfaces
     httpd = HTTPServer(server_address, RequestHandler)
     httpd.serve_forever()
 
