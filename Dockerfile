@@ -28,7 +28,6 @@ COPY --from=builder /usr/src/app/dist/ddns /usr/src/app/ddns
 EXPOSE 80
 
 
-ENV PROVIDER=dnspod
 ENV UPDATE_INTERVAL=600
 ENV DOMAIN=demo.cn
 ENV SUB_DOMAIN=ddns
