@@ -14,6 +14,7 @@ domain = os.getenv('DOMAIN')
 sub_domain = os.getenv('SUB_DOMAIN')
 update_interval = int(os.getenv('UPDATE_INTERVAL', 600))  # default to 600 seconds if not set
 
+# DNS API endpoints and parameters
 if provider == 'dnspod':
     base_url = "https://dnsapi.cn"
     headers = {}
@@ -65,9 +66,7 @@ def get_record_id(record_type):
                         return record.get("id")
         except requests.RequestException as e:
             print(f"Failed to get {record_type} record ID: {e}")
-
-    # Alidns provider will add here as soon as possible
-    
+    # Add Alidns provider handling if needed
     return None
 
 # Function to create DNS record
@@ -100,7 +99,8 @@ def update_dns_record(record_type, ip_address):
     payload = common_payload.copy()
     if provider == 'dnspod':
         payload.update({"record_id": record_id, "record_type": record_type, "value": ip_address})
-    # Add Alidns provider handling if needed
+
+    # Add Alidns provider handling soon~~~~
 
     try:
         response = requests.post(f"{base_url}/Record.Modify", headers=headers, data=payload)
