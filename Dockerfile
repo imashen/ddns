@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY . .
 
 
-RUN apt-get update && apt-get install -y binutils
+RUN apt-get update && apt-get install -y binutils curl
 
 RUN pip install --no-cache-dir pyinstaller requests
 
