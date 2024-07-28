@@ -28,12 +28,12 @@ common_payload = {
 def get_public_ips():
     ipv4, ipv6 = None, None
     try:
-        ipv4 = requests.get("https://ipv4.ip.sb", headers={"User-Agent": "Mozilla"}).text.strip()
+        ipv4 = requests.get("https://api-ipv4.ip.sb/ip", headers={"User-Agent": "Mozilla"}).text.strip()
     except requests.RequestException as e:
         print(f"Failed to get IPv4 address")
 
     try:
-        ipv6 = requests.get("https://ipv6.ip.sb", headers={"User-Agent": "Mozilla"}).text.strip()
+        ipv6 = requests.get("https://api-ipv6.ip.sb/ip", headers={"User-Agent": "Mozilla"}).text.strip()
     except requests.RequestException as e:
         print(f"Failed to get IPv6 address")
 
